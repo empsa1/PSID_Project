@@ -1,0 +1,18 @@
+DELIMITER //
+
+CREATE TRIGGER before_update_parametrosexperiencia
+BEFORE UPDATE ON ParametrosExperiencia
+FOR EACH ROW
+BEGIN
+    DECLARE experiencia_exists INT;
+
+    SELECT COUNT(*) INTO experiencia_exists
+    FROM Experiencia
+    WHERE IDExperiencia = NEW.IDExperiencia;
+    IF experiencia_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot update parameters. Experiment does not exist.';
+    END IF;
+END//
+
+DELIMITER ;

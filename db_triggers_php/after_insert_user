@@ -1,0 +1,9 @@
+DELIMITER //
+
+CREATE TRIGGER after_insert_utilizador
+AFTER INSERT ON Utilizador
+FOR EACH ROW
+BEGIN
+END//
+
+DELIMITER ;

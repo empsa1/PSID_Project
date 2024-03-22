@@ -1,0 +1,22 @@
+DELIMITER //
+
+CREATE TRIGGER before_insert_medicoespassagens
+BEFORE INSERT ON MedicoesPassagens
+FOR EACH ROW
+BEGIN
+    DECLARE source_room_exists INT;
+    DECLARE destination_room_exists INT;
+
+    SELECT COUNT(*) INTO source_room_exists
+    FROM Experiencia
+    WHERE IDExperiencia = NEW.SalaOrigem;
+    SELECT COUNT(*) INTO destination_room_exists
+    FROM Experiencia
+    WHERE IDExperiencia = NEW.SalaDestino;
+    IF source_room_exists = 0 OR destination_room_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot insert new passage measurement. Source or destination room does not exist.';
+    END IF;
+END//
+
+DELIMITER ;

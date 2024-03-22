@@ -1,0 +1,18 @@
+DELIMITER //
+
+CREATE TRIGGER before_delete_utilizador
+BEFORE DELETE ON Utilizador
+FOR EACH ROW
+BEGIN
+    DECLARE user_exists_in_experiencia INT;
+
+    SELECT COUNT(*) INTO user_exists_in_experiencia
+    FROM Experiencia
+    WHERE Investigador = OLD.IDUtilizador;
+    IF user_exists_in_experiencia > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot delete user. User is assigned as investigator in one or more experiments.';
+    END IF;
+END//
+
+DELIMITER ;
